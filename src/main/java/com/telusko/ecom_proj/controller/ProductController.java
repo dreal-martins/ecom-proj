@@ -2,6 +2,7 @@ package com.telusko.ecom_proj.controller;
 
 import com.telusko.ecom_proj.model.Product;
 import com.telusko.ecom_proj.service.ProductService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +26,13 @@ public class ProductController {
 
     @Autowired
     private ProductService service;
+
+    @GetMapping("/")
+    @Hidden
+    public String redirectToSwagger() {
+        return "hello world";
+    }
+
 
     @GetMapping("/products")
     @Operation(summary = "Get all products", description = "Retrieve a list of all products")
@@ -54,30 +62,29 @@ public class ProductController {
     @ApiResponse(responseCode = "201", description = "Product created successfully")
     public ResponseEntity<?> addProduct(
             @Parameter(description = "Product details", required = true)
-            @RequestPart Product product,
-            @Parameter(description = "Product image file", required = true)
-            @RequestPart MultipartFile imageFile) {
+            @RequestBody Product product
+          ) {
         try {
-            Product product1 = service.addProduct(product, imageFile);
+            Product product1 = service.addProduct(product);
             return new ResponseEntity<>(product1, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/product/{productId}/image")
-    @Operation(summary = "Get product image", description = "Retrieve the image of a specific product")
-    @ApiResponse(responseCode = "200", description = "Image retrieved successfully")
-    public ResponseEntity<byte[]> getImageByProductId(
-            @Parameter(description = "Product ID", required = true)
-            @PathVariable int productId) {
-        Product product = service.getProductById(productId);
-        byte[] imageFile = product.getImageData();
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(product.getImageType()))
-                .body(imageFile);
-    }
+//    @GetMapping("/product/{productId}/image")
+//    @Operation(summary = "Get product image", description = "Retrieve the image of a specific product")
+//    @ApiResponse(responseCode = "200", description = "Image retrieved successfully")
+//    public ResponseEntity<byte[]> getImageByProductId(
+//            @Parameter(description = "Product ID", required = true)
+//            @PathVariable int productId) {
+//        Product product = service.getProductById(productId);
+//        byte[] imageFile = product.getImageData();
+//
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.valueOf(product.getImageType()))
+//                .body(imageFile);
+//    }
 
     @PutMapping("/product/{id}")
     @Operation(summary = "Update product", description = "Update an existing product with optional new image")
@@ -89,7 +96,7 @@ public class ProductController {
             @RequestPart Product product,
             @Parameter(description = "New product image (optional)")
             @RequestPart(required = false) MultipartFile imageFile) throws IOException {
-        Product product1 = service.updateProduct(id, product, imageFile);
+        Product product1 = service.updateProduct(id, product);
         if (product1 != null)
             return new ResponseEntity<>("updated", HttpStatus.OK);
         else

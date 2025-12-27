@@ -16,26 +16,18 @@ public class ProductService {
     private ProductRepo repo;
 
     public List<Product> getAllProducts() {
-
         return repo.findAll();
-
     }
 
     public Product getProductById(int id) {
         return repo.findById(id).orElse(null);
     }
 
-    public Product addProduct(Product product, MultipartFile imageFile) throws IOException {
-        product.setImageName(imageFile.getOriginalFilename());
-        product.setImageType(imageFile.getContentType());
-        product.setImageData(imageFile.getBytes());
+    public Product addProduct(Product product) throws IOException {
         return repo.save(product);
     }
 
-    public Product updateProduct(int id, Product product, MultipartFile imageFile) throws IOException {
-        product.setImageData(imageFile.getBytes());
-        product.setImageName(imageFile.getOriginalFilename());
-        product.setImageType(imageFile.getContentType());
+    public Product updateProduct(int id, Product product) throws IOException {
         return repo.save(product);
     }
 

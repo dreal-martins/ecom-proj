@@ -28,8 +28,8 @@ public class Product {
     private boolean productAvailable;
     private int stockQuantity;
 
-    private String imageName;
-    private String imageType;
-    @Lob
-    private byte[] imageData;
+//    private String imageName;
+//    private String imageType;
+//    @Lob
+//    private byte[] imageData;
 }
